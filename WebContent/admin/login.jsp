@@ -17,6 +17,7 @@
 
 		<c:if test="${msg!=null}"><div class="alert alert-danger text-center">${msg}</div></c:if>
 
+
 		<form class="form-horizontal" action="login" method="post" style="margin-top:15%;">
 			<h2 class="text-center">登录后台</h2>
 			<div class="form-group">
@@ -29,6 +30,11 @@
 					<input type="password" class="form-control" style="height:auto;padding:10px;" placeholder="输入密码" name="password" value="admin">
 				</div>
 			</div>
+
+
+
+
+
 			<div class="col-md-4 col-md-offset-4">			
 				<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
 			</div>

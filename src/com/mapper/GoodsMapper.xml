@@ -94,6 +94,14 @@
       </if>
     </trim>
   </insert>
+
+  <select id="findSuggestionsByName" resultType="java.lang.String" parameterType="java.lang.String">
+    SELECT name
+    FROM goods
+    WHERE name LIKE CONCAT('%', #{query}, '%')
+    LIMIT 10  <!-- 限制返回结果数量以提高性能 -->
+  </select>
+
   <update id="updateByIdSelective" parameterType="com.entity.Goods" >
     update goods
     <set >
@@ -136,4 +144,16 @@
       type_id = #{typeId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="getSearchSuggestions" resultType="java.lang.String">
+    SELECT DISTINCT name
+    FROM goods
+    WHERE name LIKE CONCAT('%', #{term}, '%')
+      LIMIT 10
+  </select>
+
+
+
+
 </mapper>

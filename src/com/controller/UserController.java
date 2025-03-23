@@ -5,10 +5,12 @@ import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,9 +30,9 @@ import com.service.UserService;
 @Controller
 @RequestMapping("/index")
 public class UserController{
-	
+
 	private static final String INDENT_KEY = "order";
-	
+
 	@Resource
 	private UserService userService;
 	@Resource
@@ -40,7 +42,7 @@ public class UserController{
 	@Resource
 	private TypeService typeService;
 
-	
+
 	/**
 	 * 注册用户
 	 * @return
@@ -65,7 +67,7 @@ public class UserController{
 			return "redirect:login?flag=-1"; // 注册成功后转去登录
 		}
 	}
-	
+
 	/**
 	 * 用户登录
 	 * @return
@@ -96,7 +98,7 @@ public class UserController{
 		session.removeAttribute("order");
 		return "/index/login.jsp";
 	}
-	
+
 	/**
 	 * 查看购物车
 	 * @return
@@ -106,7 +108,7 @@ public class UserController{
 		model.addAttribute("typeList", typeService.getList());
 		return "/index/cart.jsp";
 	}
-	
+
 	/**
 	 * 购买
 	 * @return
@@ -125,7 +127,7 @@ public class UserController{
 		}
 		return "ok";
 	}
-	
+
 	/**
 	 * 减少
 	 */
@@ -137,7 +139,7 @@ public class UserController{
 		}
 		return "ok";
 	}
-	
+
 	/**
 	 * 删除
 	 */
@@ -149,8 +151,8 @@ public class UserController{
 		}
 		return "ok";
 	}
-	
-	
+
+
 	/**
 	 * 提交订单
 	 * @return
@@ -183,7 +185,7 @@ public class UserController{
 		request.setAttribute("msg", "处理失败!");
 		return "/index/cart.jsp";
 	}
-	
+
 	/**
 	 * 支付页面
 	 * @return
@@ -194,7 +196,7 @@ public class UserController{
 		request.setAttribute("order", orderService.get(orderid));
 		return "/index/pay.jsp";
 	}
-	
+
 	/**
 	 * 支付(模拟)
 	 * @return
@@ -205,7 +207,7 @@ public class UserController{
 		orderService.pay(order);
 		return "redirect:payok?orderid="+order.getId();
 	}
-	
+
 	/**
 	 * 支付成功
 	 * @return
@@ -222,7 +224,7 @@ public class UserController{
 		}
 		return "/index/payok.jsp";
 	}
-	
+
 	/**
 	 * 查看订单
 	 * @return
@@ -245,8 +247,20 @@ public class UserController{
 		model.addAttribute("orderList", orderList);
 		return "/index/order.jsp";
 	}
-	
-	
+
+
+	/**
+	 * 模拟第三方登录回调
+	 */
+	@PostMapping("/mockLoginCallback")
+	public String mockLoginCallback(@RequestParam("username") String username, HttpServletRequest request) {
+		request.getSession().setAttribute("thirdPartyUsername", username);
+		return "redirect:login?flag=-1";
+	}
+
+
+
+
 	/**
 	 * 个人信息
 	 * @return
@@ -274,7 +288,7 @@ public class UserController{
 		model.addAttribute("msg", "信息修改成功!");
 		// 修改密码
 		if(user.getPasswordNew()!=null && !user.getPasswordNew().trim().isEmpty()) {
-			if (user.getPassword()!=null && !user.getPassword().trim().isEmpty() 
+			if (user.getPassword()!=null && !user.getPassword().trim().isEmpty()
 					&& user.getPassword().equals(u.getPassword())) {
 				if (user.getPasswordNew()!=null && !user.getPasswordNew().trim().isEmpty()) {
 					u.setPassword(user.getPasswordNew());
@@ -288,5 +302,5 @@ public class UserController{
 		}
 		return "/index/my.jsp";
 	}
-	
+
 }

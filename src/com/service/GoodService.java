@@ -15,32 +15,31 @@ import com.entity.Tops;
 /**
  * 商品服务
  */
-@Service	// 注解为service层spring管理bean
-@Transactional	// 注解此类所有方法加入spring事务, 具体设置默认
+@Service // 注解为service层spring管理bean
+@Transactional // 注解此类所有方法加入spring事务, 具体设置默认
 public class GoodService {
 
-	@Autowired	
+	@Autowired
 	private GoodsDao goodDao;
 	@Autowired
 	private TopService topService;
 	@Autowired
 	private TypeService typeService;
-	
-	
+
 	/**
 	 * 获取列表
 	 * @param page
 	 * @param size
 	 * @return
 	 */
-	public List<Goods> getList(int status, int page, int size){
+	public List<Goods> getList(int status, int page, int size) {
 		if (status == 0) {
-			return packTopList(goodDao.getList(size * (page-1), size));
+			return packTopList(goodDao.getList(size * (page - 1), size));
 		}
-		List<Tops> topList = topService.getList((byte)status, page, size);
-		if(topList!=null && !topList.isEmpty()) {
+		List<Tops> topList = topService.getList((byte) status, page, size);
+		if (topList != null && !topList.isEmpty()) {
 			List<Goods> goodList = new ArrayList<>();
-			for(Tops top : topList) {
+			for (Tops top : topList) {
 				goodList.add(packTop(goodDao.selectById(top.getGoodId())));
 			}
 			return goodList;
@@ -52,28 +51,38 @@ public class GoodService {
 	 * 获取产品总数
 	 * @return
 	 */
-	public long getTotal(int status){
+	public long getTotal(int status) {
 		if (status == 0) {
 			return goodDao.getTotal();
 		}
-		return topService.getTotal((byte)status);
+		return topService.getTotal((byte) status);
 	}
-	
+
+	/**
+	 * 获取搜索建议列表
+	 * @param term 用户输入的搜索关键词
+	 * @return 搜索建议列表
+	 */
+	public List<String> getSearchSuggestions(String term) {
+		// 调用 DAO 层方法获取搜索建议
+		return goodDao.getSearchSuggestions(term);
+	}
+
 	/**
 	 * 通过名称获取产品列表
 	 * @param page
 	 * @param size
 	 * @return
 	 */
-	public List<Goods> getListByName(String name, int page, int size){
-		return goodDao.getListByName(name, size * (page-1), size);
+	public List<Goods> getListByName(String name, int page, int size) {
+		return goodDao.getListByName(name, size * (page - 1), size);
 	}
-	
+
 	/**
 	 * 通过名称获取产品总数
 	 * @return
 	 */
-	public long getTotalByName(String name){
+	public long getTotalByName(String name) {
 		return goodDao.getTotalByName(name);
 	}
 
@@ -85,18 +94,18 @@ public class GoodService {
 	 * @return
 	 */
 	public List<Goods> getListByType(int typeid, int page, int size) {
-		return typeid > 0 ? goodDao.getListByType(typeid, size * (page-1), size) : goodDao.getList(size * (page-1), size);
+		return typeid > 0 ? goodDao.getListByType(typeid, size * (page - 1), size) : goodDao.getList(size * (page - 1), size);
 	}
-	
+
 	/**
 	 * 获取数量
 	 * @param typeid
 	 * @return
 	 */
-	public long getTotalByType(int typeid){
+	public long getTotalByType(int typeid) {
 		return typeid > 0 ? goodDao.getTotalByType(typeid) : goodDao.getTotal();
 	}
-	
+
 	/**
 	 * 通过id获取
 	 * @param productid
@@ -109,7 +118,7 @@ public class GoodService {
 		}
 		return goods;
 	}
-	
+
 	/**
 	 * 添加
 	 * @param product
@@ -121,12 +130,12 @@ public class GoodService {
 	/**
 	 * 修改
 	 * @param product
-	 * @return 
+	 * @return
 	 */
 	public boolean update(Goods good) {
 		return goodDao.updateById(good) > 0;
 	}
-	
+
 	/**
 	 * 删除商品
 	 * 先删除此商品的推荐信息
@@ -136,7 +145,6 @@ public class GoodService {
 		topService.deleteByGoodid(goodid);
 		return goodDao.deleteById(goodid) > 0;
 	}
-	
 
 	/**
 	 * 封装商品推荐信息
@@ -144,7 +152,7 @@ public class GoodService {
 	 * @return
 	 */
 	private List<Goods> packTopList(List<Goods> list) {
-		for(Goods good : list) {
+		for (Goods good : list) {
 			good.setType(typeService.get(good.getTypeId()));
 			good = packTop(good);
 		}
@@ -157,15 +165,15 @@ public class GoodService {
 	 * @return
 	 */
 	private Goods packTop(Goods good) {
-		if(good != null) {
+		if (good != null) {
 			List<Tops> topList = topService.getListByGoodid(good.getId());
 			if (Objects.nonNull(topList) && !topList.isEmpty()) {
-				for(Tops top : topList) {
-					if(top.getType()==Tops.TYPE_SCROLL) {
+				for (Tops top : topList) {
+					if (top.getType() == Tops.TYPE_SCROLL) {
 						good.setTopScroll(true);
-					}else if (top.getType()==Tops.TYPE_LARGE) {
+					} else if (top.getType() == Tops.TYPE_LARGE) {
 						good.setTopLarge(true);
-					}else if (top.getType()==Tops.TYPE_SMALL) {
+					} else if (top.getType() == Tops.TYPE_SMALL) {
 						good.setTopSmall(true);
 					}
 				}
@@ -173,5 +181,4 @@ public class GoodService {
 		}
 		return good;
 	}
-
 }

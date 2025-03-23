@@ -1,11 +1,13 @@
 package com.controller;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -14,6 +16,11 @@ import com.service.GoodService;
 import com.service.TopService;
 import com.service.TypeService;
 import com.util.PageUtil;
+
+
+
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 /**
  * 前台相关接口
@@ -30,7 +37,25 @@ public class IndexController{
 	private GoodService goodService;
 	@Autowired
 	private TypeService typeService;
-	
+
+
+
+	/**
+	 * 搜索建议接口
+	 * @param term 用户输入的搜索关键词
+	 * @return 搜索建议列表
+	 */
+	@RequestMapping("/searchSuggestion")
+	@ResponseBody
+	public List<String> searchSuggestion(@RequestParam("term") String term) {
+		// 调用服务层方法获取搜索建议
+		return goodService.getSearchSuggestions(term);
+	}
+
+
+
+
+
 
 	/**
 	 * 首页
@@ -99,5 +124,7 @@ public class IndexController{
 		request.setAttribute("typeList", typeService.getList());
 		return "/index/goods.jsp";
 	}
+
+
 
 }

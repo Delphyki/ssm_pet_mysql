@@ -12,6 +12,10 @@
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="layer/layer.js"></script>
 	<script type="text/javascript" src="js/cart.js"></script>
+	<!-- 引入 jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- 引入 jQuery UI -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 </head>
 <body>
 	
@@ -103,6 +107,38 @@
 	<!--subscribe-->
 	<div class="subscribe"></div>
 	<!--//subscribe-->
+
+
+
+	<!-- 搜索框 -->
+	<input type="text" id="search-input" placeholder="搜索商品">
+
+	<script>
+		$(document).ready(function() {
+			// 初始化自动补全功能
+			$("#search-input").autocomplete({
+				source: function(request, response) {
+					// 发送 AJAX 请求到后端获取补全建议
+					$.ajax({
+						url: "/index/searchSuggestion",
+						dataType: "json",
+						data: {
+							term: request.term
+						},
+						success: function(data) {
+							response(data);
+						}
+					});
+				},
+				minLength: 1 // 输入至少 1 个字符时开始请求补全建议
+			});
+		});
+	</script>
+
+
+
+
+
 	
 	
 	<jsp:include page="footer.jsp"/>

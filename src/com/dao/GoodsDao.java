@@ -12,6 +12,15 @@ public interface GoodsDao {
 
     int insert(Goods record);
 
+    /**
+     * 获取搜索建议列表
+     * @param term 用户输入的搜索关键词
+     * @return 搜索建议列表
+     */
+    List<String> getSearchSuggestions(String term);
+
+
+
     int insertSelective(Goods record);
 
     Goods selectById(Integer id);
@@ -37,6 +46,14 @@ public interface GoodsDao {
     @Select("select * from goods order by id desc limit #{begin}, #{size}")
     public List<Goods> getList(@Param("begin") int begin, @Param("size") int size);
 
+
+
+
+
+
+
+
+
     /**
      * 获取总数
      *
@@ -55,6 +72,9 @@ public interface GoodsDao {
      */
     @Select("select * from goods where type_id=#{typeid} order by id desc limit #{begin}, #{size}")
     public List<Goods> getListByType(@Param("typeid") int typeid, @Param("begin") int begin, @Param("size") int size);
+
+
+    List<String> findSuggestionsByName(@Param("query") String query);
 
     /**
      * 通过类型获取总数
